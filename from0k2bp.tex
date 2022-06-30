@@ -235,7 +235,7 @@ EXCEPT \ref{perfect-hiding-and-perfect-binding-are-incompatible},
 \subsection[Homomorphism]{\texorpdfstring{\protect\hypertarget{anchor-13}{}{}Homomorphism}{Homomorphism}}\label{homomorphism}}
 
 Consider this simple mathematical fact: $a^b \times a^c = a^{b+c}$. Also, the result is equal to $a^{c+b}$.
-Notice that the addition of and works, and follows the normal addition
+Notice that the addition of $b$ and $c$ works, and follows the normal addition
 rule\footnote{``commutativity'' -- you can swap them round with no effect}, even
 after we've put all the numbers into exponents. This is an example of
 ``homomorphism''\footnote{Etymology note: ``homo'' here means ``same'' and
@@ -304,7 +304,7 @@ counterparty), $a$ is the value we commit to (assume from now on it's a
 number, not a string), $r$ is the randomness which provides hiding, $G$ is as
 already mentioned the publically agreed generator of the elliptic curve,
 and $H$ is another curve point, for which \textbf{nobody} knows the discrete
-logarithm $q$ s.t. $H=qG$. This unknowness is vital, as we'll expand upon next.
+logarithm $q$ s.t. $H=qG$. This unknownness is vital, as we'll expand upon next.
 
 But, crucially for the rest of this document, this new commitment scheme
 \emph{does} have a homomorphism:
@@ -375,7 +375,7 @@ incompatible}{Perfect Hiding and Perfect Binding are incompatible}}\label{perfec
 
 The Pedersen commitment is not \emph{just} ``hiding'' as explained
 above: it has a property known as ``perfect'' or ``unconditional'' or
-``statistical'' hiding.
+``statistical'' or ``information-theoretically'' hiding.
 
 This fact is sort of ``complementary'' to the above fact in 2.3.1 --
 that it's not binding, if you know the discrete log of $Q=qG$. Consider, if I
@@ -427,7 +427,7 @@ to:
 C = rH + (v_1G_1 + v_2G_2 + \ldots + v_nG_n) = rH + \textbf{vG} \label{vector-pedersen-commitment-def:1} 
 \end{align}
 The individual $G_i$ generators can be constructed using a simple algorithm of the form
-already mentioned (like, take a $\mathcal{H}(\textrm{encode}(G)||i)$  where $\mathcal{H}$ represents some hash function).
+already mentioned (like, take $\mathcal{H}(\textrm{encode}(G)||i)$  where $\mathcal{H}$ represents some hash function).
 The opening of this commitment would of course be the random scalar $r$ and
 the components of the vector $\textbf{v}$. I defer to elsewhere, proof
 that this extension preserves both the hiding and binding properties,
@@ -469,7 +469,7 @@ An ``argument of knowledge'' is a technical term distinguished from
 -- an adversary with enough computing power \emph{may} be able to
 convince you that he knows the secret value(s), even if he doesn't.
 
-\emph{Before starting: we will not be discussing , here, removing the
+\emph{Before starting: we will not be discussing, here, removing the
 interactivity from this process using Fiat-Shamir / random oracle model,
 as it's an extra level of complexity in the zero knowledge proof aspect
 we want to avoid for now. We'll make some comments on it near the end of
@@ -584,8 +584,8 @@ properties of any zero knowledge proof:
   Soundness -- does the Prover actually \emph{prove} the truth of the
   statement
 \item
-  Zero-Knowledgeness -- can we reveal that the Prover reveals nothing
-  else than that the statement is true.
+  Zero-Knowledgeness -- can we ensure that the Prover reveals nothing
+  else except that the statement is true.
 \end{itemize}
 
 In academic coverage of this concept, there are a lot additional
@@ -710,7 +710,9 @@ running it, stop at any point (imagine debugger breakpoints). Crucially
 you can make copies of its current state. You can take info from one run
 and feed it into another, etc. If by doing this whacky stuff you somehow
 manage to get it to spit out information that reveals the secret (say, a
-number $x$ such that $P=xG$), then it must have been in there in the first place.
+number $x$ such that $P=xG$), then it must have been in there in the first place.\footnote{We
+require the ``extractor'' algorithm (that causes the Prover to reveal the secret) to be efficient, i.e.
+run in polynomial time}
 
 In the Schnorr identity protocol case, this is quite straightforward: we
 get the Prover to run twice, but only after the same initial random
@@ -755,7 +757,7 @@ set of transcripts:
 &(C_{0,m}, e_m, (\mathbf{z}_m , s_m)) \\
 \end{align*}
 The Extractor now effectively uses this data as a set of linear
-equations that it can solve to extract the values of the commited
+equations that it can solve to extract the values of the committed
 vectors $\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_m$. Here's how. It starts by constructing the Vandermonde matrix
 {[}\protect\hyperlink{anchor-30}{19}{]} of the challenges $e_i$:
 \[
@@ -775,8 +777,8 @@ of the points $(e_0, e_1, \ldots , e_m)$. What's particularly elegant here is th
 of $m+1$ polynomial evaluations (the polynomial here has degree $m$), back to its
 set of coefficients, and most crucially \textbf{that mapping is one-to-one
 and therefore the solution is unique. }\emph{(This idea is used in
-polynomial interpolation; as you may know, a set of $N+1$ evaluations
-fixes a polynomial of degree $N$.)}
+polynomial interpolation; as you may know, a set of $m+1$ evaluations
+fixes a polynomial of degree $m$.)}
 
 Note that this of course breaks down where there is \emph{no} such
 inverse, which is easily seen to occur exactly and \emph{only} in the
@@ -1027,7 +1029,7 @@ you have a secret value $x$.
 
 This would be fine except we're trying to keep $x$ secret, so \ldots{}
 
-\underline{Option 2: send to $\mathcal{V}$}
+\underline{Option 2: send nothing to $\mathcal{V}$}
 
 This hides (``blinds'' is sometimes the term used) $x$ perfectly (in
 particular, to an outside observer of the communication, so that's
@@ -1163,7 +1165,7 @@ But this equation is reconstructed ``under'' Pedersen commitments; using
 Comm as shorthand for that, we want the verifer to be able to
 reconstruct a check that:
 \[\textrm{Comm}\left(\mathbf{f}_x \cdot \mathbf{f}_y\right) = e^2 C_z + e\left(\textrm{Comm}\left(\mathbf{x} \cdot \mathbf{d}_y + \mathbf{y} \cdot \mathbf{d}_x\right)\right) + \textrm{Comm}\left(\mathbf{d}_x \cdot \mathbf{d}_y \right),\]
-but we prepared $C_1, C_0$ and $t_z$ to fulfil exactly this role, so we have
+but we prepared $C_1, C_0$ and $t_z$ to fulfill exactly this role, so we have
 \[t_z H + \left(\mathbf{f}_x \cdot \mathbf{f}_y\right)G \stackrel{?}{=} \ e^2 C_z + eC_1 + C_0\]
 and the reader can now easily check for himself, by simple substitution,
 that this will be passed in the honest case.
